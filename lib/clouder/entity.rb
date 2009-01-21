@@ -44,7 +44,12 @@ module Clouder
     end
 
     def save
-      result = Rest.post(collection_uri, @table)
+      if new?
+        result = Rest.post(collection_uri, @table)
+      else
+        result = Rest.put(uri, @table, "If-Match" => etag)
+      end
+      
       if result["ok"]
         @id, @etag, @last_modified = result.values_at("uri", "etag", "last_modified")
         @id = @id.split("/").last
@@ -56,17 +61,25 @@ module Clouder
       end
     end    
 
+    def versions
+      if uri
+        resp = Rest.get(File.join(uri, "versions"))
+        resp['uris']
+      end
+    end
+    
     def new?
       @uri == nil and @etag == nil and @last_modified == nil
     end
               
-    def collection_uri
-      self.class.uri
-    end
-        
     def inspect
       "#<#{self.class.name} uri=#{@uri}, etag=#{@etag}, last_modified=#{@last_modified}, #{@table.inspect}>"
     end
-    
+
+    private
+
+    def collection_uri
+      self.class.uri
+    end
   end
 end

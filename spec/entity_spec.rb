@@ -72,4 +72,22 @@ describe "Entity" do
     n.last_modified.should == last_modified
   end
 
+  it "should let you update saved objects" do
+    n = Notes.new
+    n.text = "My Note"
+    n.author = "John Doe"
+    n.save
+
+    n = Notes.new(n.id)
+    n.versions.size.should == 1
+    n.text = "My modified note"
+    n.author = "John Doe II"
+    n.save.should == true
+
+    n = Notes.new(n.id)
+    n.versions.size.should == 2
+    n.text.should == "My modified note"
+    n.author.should == "John Doe II"
+  end
+
 end

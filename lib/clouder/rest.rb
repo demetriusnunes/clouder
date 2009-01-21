@@ -12,18 +12,18 @@ class Rest
       RestClient.proxy = url
     end
  
-    def put uri, doc = nil
+    def put uri, doc = nil, headers = {}
       payload = doc.to_json if doc
-      JSON.parse(RestClient.put(uri, payload))
+      JSON.parse(RestClient.put(uri, payload, headers))
     end
  
     def get uri
       JSON.parse(RestClient.get(uri), :max_nesting => false)
     end
   
-    def post uri, doc = nil
+    def post uri, doc = nil, headers = {}
       payload = doc.to_json if doc
-      JSON.parse(RestClient.post(uri, payload))
+      JSON.parse(RestClient.post(uri, payload, headers))
     end
   
     def delete uri
