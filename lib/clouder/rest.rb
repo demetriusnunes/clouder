@@ -2,7 +2,11 @@ require 'cgi'
 
 class Rest
   class << self
-  
+
+    def last_response
+      RestClient.last_response
+    end
+      
     # set proxy for RestClient to use
     def proxy url
       RestClient.proxy = url
@@ -14,7 +18,6 @@ class Rest
     end
  
     def get uri
-      puts RestClient.get(uri).headers.inspect
       JSON.parse(RestClient.get(uri), :max_nesting => false)
     end
   

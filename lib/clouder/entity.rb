@@ -35,6 +35,8 @@ module Clouder
       elsif id_or_attributes.is_a?(String)
         @id = id_or_attributes
         @table = Rest.get(uri)
+        @etag = Rest.last_response['etag'].gsub('"', '')
+        @last_modified = Time.parse(Rest.last_response['last-modified'])
         @table.each { |k,v| @table.delete(k); @table[k.to_sym] = v }
       else
         @table = Hash.new

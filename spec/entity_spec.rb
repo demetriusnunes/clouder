@@ -18,16 +18,16 @@ describe "Entity" do
     Notes.uri.should == "http://localhost:9292/notes"
   end
   
-#  it "should retrieve all instances" do
-#    notes = Notes.all
-#    size = notes.size
-#    
-#    Notes.create(:text => "note 1").should == true
-#    Notes.create(:text => "note 2").should == true
-#    
-#    notes = Notes.all
-#    notes.size.should == size + 2
-#  end
+  it "should retrieve all instances" do
+    notes = Notes.all
+    size = notes.size
+    
+    Notes.create(:text => "note 1").should == true
+    Notes.create(:text => "note 2").should == true
+    
+    notes = Notes.all
+    notes.size.should == size + 2
+  end
   
   it "should let you access attributes" do
     n = Notes.new
