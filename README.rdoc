@@ -1,22 +1,35 @@
 = clouder
 
-* FIX (url)
+* http://github.com/demetriusnunes/clouder/tree/master
 
 == DESCRIPTION:
 
-FIX (describe your package)
+A Ruby client library for accessing CloudKit using Ruby objects.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
-
+  FIX
+  
 == SYNOPSIS:
 
   FIX (code sample of usage)
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+CloudKit API Checklist:
+
+* GET /cloudkit-meta 
+* OPTIONS /%uri% 
+* GET /%collection% - OK!
+* GET /%collection%/_resolved 
+* GET /%collection%/%uuid% - OK!
+* GET /%collection%/%uuid%/versions - OK! 
+* GET /%collection%/%uuid%/versions/_resolved 
+* GET /%collection%/%uuid%/versions/%etag% 
+* POST /%collection% - OK! 
+* PUT /%collection%/%uuid% - OK! 
+* DELETE /%collection%/%uuid% - OK! 
+* HEAD /%uri% 
 
 == INSTALL:
 
