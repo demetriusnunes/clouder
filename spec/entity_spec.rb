@@ -1,17 +1,17 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
-# Time to add your specs!
-# http://rspec.info/
 describe "Entity" do
 
-  before :each do
+  before :all do
     class Notes < Clouder::Entity
       uri "http://localhost:9292/notes"
     end
-  end  
+    Notes.all.each { |id| Notes.new(id).destroy }
+  end
   
   it "should let you create entity classes" do
-    Notes.new
+    n = Notes.new
+    n.new?.should == true
   end
   
   it "should let you inspect its uri" do
@@ -19,14 +19,12 @@ describe "Entity" do
   end
   
   it "should retrieve all instances" do
-    notes = Notes.all
-    size = notes.size
+    size = Notes.all.size
     
     Notes.create(:text => "note 1").should == true
     Notes.create(:text => "note 2").should == true
     
-    notes = Notes.all
-    notes.size.should == size + 2
+    Notes.all.size.should == size + 2
   end
   
   it "should let you access attributes" do
@@ -90,4 +88,14 @@ describe "Entity" do
     n.author.should == "John Doe II"
   end
 
+  it "should let you delete existing objects" do
+    size = Notes.all.size
+    n = Notes.new
+    n.text = "My Note"
+    n.author = "John Doe"
+    n.save
+    Notes.all.size.should == size + 1
+    n.destroy
+    Notes.all.size.should == size
+  end
 end

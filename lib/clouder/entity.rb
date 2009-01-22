@@ -12,12 +12,16 @@ module Clouder
       def all
         result = Rest.get(@uri)
         total, uris, offset = result.values_at("total", "uris", "offset")
-        uris.map { |uri| self.new(uri) rescue nil }
+        uris
       end
       
       def create(hsh)
         obj = self.new(hsh)
         obj.save   
+      end
+      
+      def id_from_uri(uri)
+        uri.split("/").last
       end
     end
 
@@ -33,7 +37,7 @@ module Clouder
       if id_or_attributes.is_a?(Hash)
         @table = id_or_attributes
       elsif id_or_attributes.is_a?(String)
-        @id = id_or_attributes
+        @id = Entity.id_from_uri(id_or_attributes)
         @table = Rest.get(uri)
         @etag = Rest.last_response['etag'].gsub('"', '')
         @last_modified = Time.parse(Rest.last_response['last-modified'])
@@ -52,7 +56,7 @@ module Clouder
       
       if result["ok"]
         @id, @etag, @last_modified = result.values_at("uri", "etag", "last_modified")
-        @id = @id.split("/").last
+        @id = Entity.id_from_uri(@id)
         @last_modified = Time.parse(@last_modified)
         true
       else
@@ -61,6 +65,11 @@ module Clouder
       end
     end    
 
+    def destroy
+      result = Rest.delete uri, "If-Match" => etag
+      result["ok"] == true
+    end
+    
     def versions
       if uri
         resp = Rest.get(File.join(uri, "versions"))

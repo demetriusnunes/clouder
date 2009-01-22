@@ -26,8 +26,8 @@ class Rest
       JSON.parse(RestClient.post(uri, payload, headers))
     end
   
-    def delete uri
-      JSON.parse(RestClient.delete(uri))
+    def delete uri, headers = {}
+      JSON.parse(RestClient.delete(uri, headers))
     end
     
     def copy uri, destination
