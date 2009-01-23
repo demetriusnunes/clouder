@@ -37,6 +37,11 @@ class Rest
     def move uri, destination
       JSON.parse(RestClient.move(uri, {'Destination' => destination}))
     end
+
+    def custom method, uri, headers = {}
+      response = RestClient.custom(method, uri, headers)
+      JSON.parse(response) if response
+    end
   
     def paramify_url url, params = {}
       if params && !params.empty?

@@ -9,17 +9,27 @@ module Clouder
         address ? @uri = address : @uri
       end
       
-      def all
-        result = Rest.get(@uri)
-        total, uris, offset = result.values_at("total", "uris", "offset")
-        uris
+      def all(options = {})
+        uri = options[:resolved] ? File.join(@uri, "_resolved") : @uri
+        result = Rest.get(Rest.paramify_url(uri, options))
+        if options[:resolved]
+          result["documents"].map { |d| new(d) }
+        else
+          result["uris"]
+        end
       end
       
       def create(hsh)
         obj = self.new(hsh)
         obj.save   
+        obj
       end
       
+      def options(uri = self.uri)
+        Rest.custom(:options, uri)
+        Rest.last_response["Allow"].to_s.split(",").map { |s| s.strip }
+      end
+
       def id_from_uri(uri)
         uri.split("/").last
       end
@@ -36,6 +46,12 @@ module Clouder
       
       if id_or_attributes.is_a?(Hash)
         @table = id_or_attributes
+        if @table["uri"]
+          @id = Entity.id_from_uri(@table['uri'])
+          @etag = @table['etag'].gsub('"', '')
+          @last_modified = Time.parse(@table['last_modified'])
+          @table = @table['document']
+        end
       elsif id_or_attributes.is_a?(String)
         @id = Entity.id_from_uri(id_or_attributes)
         @table = Rest.get(uri)
@@ -75,6 +91,10 @@ module Clouder
         resp = Rest.get(File.join(uri, "versions"))
         resp['uris']
       end
+    end
+    
+    def options
+      Entity.options(uri)
     end
     
     def new?

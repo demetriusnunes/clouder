@@ -18,10 +18,10 @@ A Ruby client library for accessing CloudKit using Ruby objects.
 
 CloudKit API Checklist:
 
-* GET /cloudkit-meta 
-* OPTIONS /%uri% 
+* GET /cloudkit-meta - OK!
+* OPTIONS /%uri% - OK!
 * GET /%collection% - OK!
-* GET /%collection%/_resolved 
+* GET /%collection%/_resolved - OK!
 * GET /%collection%/%uuid% - OK!
 * GET /%collection%/%uuid%/versions - OK! 
 * GET /%collection%/%uuid%/versions/_resolved 

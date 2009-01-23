@@ -3,32 +3,75 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 describe "Entity" do
 
   before :all do
-    class Notes < Clouder::Entity
+    class Note < Clouder::Entity
       uri "http://localhost:9292/notes"
     end
-    Notes.all.each { |id| Notes.new(id).destroy }
+    Note.all.each { |id| Note.new(id).destroy }
+  end
+
+  it "should let you know the available methods for the class" do
+    options = Note.options
+    options.should == %w(GET HEAD POST OPTIONS)
+  end
+
+  it "should let you know the available methods for the object" do
+    n = Note.new
+    n.text = "My note"
+    n.save
+    n.options.should == %w(GET HEAD PUT DELETE OPTIONS)
   end
   
   it "should let you create entity classes" do
-    n = Notes.new
+    n = Note.new
     n.new?.should == true
   end
   
   it "should let you inspect its uri" do
-    Notes.uri.should == "http://localhost:9292/notes"
+    Note.uri.should == "http://localhost:9292/notes"
   end
   
+  it "should retrieve all uris" do
+    size = Note.all.size
+    Note.create(:text => "note 1").should be_an_instance_of(Note)
+    Note.create(:text => "note 2").should be_an_instance_of(Note)
+    Note.all.size.should == size + 2
+  end
+
   it "should retrieve all instances" do
-    size = Notes.all.size
+    size = Note.all.size
+    Note.create(:text => "note 1").should be_an_instance_of(Note)
+    Note.create(:text => "note 2").should be_an_instance_of(Note)
     
-    Notes.create(:text => "note 1").should == true
-    Notes.create(:text => "note 2").should == true
+    notes = Note.all(:resolved => true)
+    notes.each { |n| 
+      n.should be_an_instance_of(Note) 
+      n.etag.should_not == nil
+      n.id.should_not == nil
+      n.last_modified.should_not == nil
+    }
+    Note.all.size.should == size + 2
+  end
+
+  it "should retrieve all uris with limit and offset" do
+    size = Note.all.size
     
-    Notes.all.size.should == size + 2
+    notes = []
+    (1..4).each { |i| notes << Note.create(:text => "$note #{i}") }
+    
+    last_notes = Note.all(:limit => 4)
+    last_notes.size.should == 4
+    last_notes.should == notes.map { |n| URI.parse(n.uri).path }.reverse
+    
+    last_notes = Note.all(:offset => 2, :limit => 2)
+    last_notes.size.should == 2
+    last_notes.should == notes[0..1].map { |n| URI.parse(n.uri).path }.reverse
+
+    last_notes = Note.all(:offset => 2)
+    last_notes.size.should == size + 2
   end
   
   it "should let you access attributes" do
-    n = Notes.new
+    n = Note.new
     n.text = "My Note"
     n.author = "John Doe"
     
@@ -37,7 +80,7 @@ describe "Entity" do
   end
   
   it "should let you save new objects" do
-    n = Notes.new
+    n = Note.new
     n.new?.should == true
     n.uri.should == nil
     n.last_modified.should == nil
@@ -55,14 +98,14 @@ describe "Entity" do
   end
   
   it "should let you retrieve saved objects" do
-    n = Notes.new
+    n = Note.new
     n.text = "My Note"
     n.author = "John Doe"
     n.save
 
     id, etag, last_modified = n.id, n.etag, n.last_modified
         
-    n = Notes.new(id)
+    n = Note.new(id)
     n.text.should == "My Note"
     n.author.should == "John Doe"
     n.id.should == id
@@ -71,31 +114,31 @@ describe "Entity" do
   end
 
   it "should let you update saved objects" do
-    n = Notes.new
+    n = Note.new
     n.text = "My Note"
     n.author = "John Doe"
     n.save
 
-    n = Notes.new(n.id)
+    n = Note.new(n.id)
     n.versions.size.should == 1
     n.text = "My modified note"
     n.author = "John Doe II"
     n.save.should == true
 
-    n = Notes.new(n.id)
+    n = Note.new(n.id)
     n.versions.size.should == 2
     n.text.should == "My modified note"
     n.author.should == "John Doe II"
   end
 
   it "should let you delete existing objects" do
-    size = Notes.all.size
-    n = Notes.new
+    size = Note.all.size
+    n = Note.new
     n.text = "My Note"
     n.author = "John Doe"
     n.save
-    Notes.all.size.should == size + 1
+    Note.all.size.should == size + 1
     n.destroy
-    Notes.all.size.should == size
+    Note.all.size.should == size
   end
 end
