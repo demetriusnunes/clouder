@@ -60,11 +60,11 @@ describe "Entity" do
     
     last_notes = Note.all(:limit => 4)
     last_notes.size.should == 4
-    last_notes.should == notes.map { |n| URI.parse(n.uri).path }.reverse
+    last_notes.should == notes.map { |n| n.path }.reverse
     
     last_notes = Note.all(:offset => 2, :limit => 2)
     last_notes.size.should == 2
-    last_notes.should == notes[0..1].map { |n| URI.parse(n.uri).path }.reverse
+    last_notes.should == notes[0..1].map { |n| n.path }.reverse
 
     last_notes = Note.all(:offset => 2)
     last_notes.size.should == size + 2
@@ -141,4 +141,56 @@ describe "Entity" do
     n.destroy
     Note.all.size.should == size
   end
+  
+  it "should let you query versions about the object" do
+    n = Note.new
+    n.versions.should == []
+    n.text = "First version"
+    n.save
+
+    etag = n.etag
+    n.versions.size.should == 1
+    n.text = "Second version"
+    n.save
+
+    n.versions.size.should == 2
+    n.versions[1].should =~ Regexp.new(etag)
+    n.text = "Third version"   
+    etag = n.etag
+    n.save 
+    n.versions.size.should == 3
+    n.versions[1].should =~ Regexp.new(etag)
+  end
+
+  it "should let you query versions about the object using offset and limit" do
+    etags = []
+    n = Note.new
+    n.text = "First version"
+    n.save
+    etags << n.etag
+    
+    n.text = "Second version"
+    n.save
+    etags << n.etag
+    
+    n.text = "Third version"   
+    etag = n.etag
+    n.save 
+    etags << n.etag
+    
+    versions = n.versions(:limit => 2)
+    versions.size.should == 2
+    versions.first.should include(n.path)    
+    versions.last.should =~ Regexp.new(etags[1])    
+    
+    versions = n.versions(:offset => 1, :limit => 2)
+    versions.size.should == 2
+    versions.first.should =~ Regexp.new(etags[1])    
+    versions.last.should =~ Regexp.new(etags[0])    
+    
+    versions = n.versions(:offset => 2, :limit => 2)
+    versions.size.should == 1
+    versions.first.should =~ Regexp.new(etags[0])    
+  end
+  
 end

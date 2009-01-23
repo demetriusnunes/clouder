@@ -41,6 +41,10 @@ module Clouder
       @uri ||= File.join(collection_uri, id) if id
     end
     
+    def path
+      URI.parse(uri).path
+    end
+    
     def initialize(id_or_attributes = nil)
       @id, @etag, @last_modified = nil
       
@@ -86,10 +90,18 @@ module Clouder
       result["ok"] == true
     end
     
-    def versions
+    def versions(options = {})
       if uri
-        resp = Rest.get(File.join(uri, "versions"))
-        resp['uris']
+        url = File.join(uri, "versions")
+        url = options[:resolved] ? File.join(url, "_resolved") : url
+        result = Rest.get(Rest.paramify_url(url, options))
+        if options[:resolved]
+          result["documents"].map { |d| self.class.new(d) }
+        else
+          result["uris"]
+        end
+      else
+        []
       end
     end
     
