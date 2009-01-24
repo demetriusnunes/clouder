@@ -24,8 +24,8 @@ CloudKit API Checklist:
 * GET /%collection%/_resolved - OK!
 * GET /%collection%/%uuid% - OK!
 * GET /%collection%/%uuid%/versions - OK! 
-* GET /%collection%/%uuid%/versions/_resolved 
-* GET /%collection%/%uuid%/versions/%etag% 
+* GET /%collection%/%uuid%/versions/_resolved - OK!
+* GET /%collection%/%uuid%/versions/%etag% - OK!
 * POST /%collection% - OK! 
 * PUT /%collection%/%uuid% - OK! 
 * DELETE /%collection%/%uuid% - OK! 

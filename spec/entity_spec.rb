@@ -6,7 +6,7 @@ describe "Entity" do
     class Note < Clouder::Entity
       uri "http://localhost:9292/notes"
     end
-    Note.all.each { |id| Note.new(id).destroy }
+    Note.all(:resolved => true).each { |n| n.delete }
   end
 
   it "should let you know the available methods for the class" do
@@ -138,7 +138,9 @@ describe "Entity" do
     n.author = "John Doe"
     n.save
     Note.all.size.should == size + 1
-    n.destroy
+    n.delete
+    n.frozen?.should == true
+    n.deleted?.should == true
     Note.all.size.should == size
   end
   
@@ -192,5 +194,66 @@ describe "Entity" do
     versions.size.should == 1
     versions.first.should =~ Regexp.new(etags[0])    
   end
+  
+  it "should let you retrieve full objects from versions" do
+    texts = %w{text1 text2 text3}
+    etags = []
+    last_modifieds = []
+    n = Note.new
+    texts.each { |text| 
+      n.text = text
+      n.save
+      etags << n.etag
+      last_modifieds << n.last_modified
+    }
+    versions = n.versions(:resolved => true)
+    versions.size.should == 3
+    versions.map { |v| v.etag }.should == etags.reverse
+    versions.map { |v| v.last_modified }.should == last_modifieds.reverse
+    versions.map { |v| v.text }.should == texts.reverse
+  end
+
+  it "should let you retrieve older versions by etag" do
+    texts = %w{text1 text2 text3}
+    etags = []
+    last_modifieds = []
+    n = Note.new
+    texts.each { |text| 
+      n.text = text
+      n.save
+      etags << n.etag
+      last_modifieds << n.last_modified
+    }
+    
+    etags[0..1].each_with_index { |etag, i| 
+      n = n.versions(:etag => etag)
+      n.etag.should == etag
+      n.text.should == texts[i]
+      n.last_modified.should == last_modifieds[i]
+    }
+  end
+  
+  it "should fail when trying to save an outdated object" do
+    n = Note.create(:text => "Original")
+    
+    n2 = Note.new(n.id)
+    n2.text = "Modified"
+    n2.save.should == true
+    
+    n.text = "Modified but outdated"
+    n.save.should == false
+  end
+
+  it "should fail when trying to delete an outdated object" do
+    n = Note.create(:text => "Original")
+    
+    n2 = Note.new(n.id)
+    n2.text = "Modified"
+    n2.save.should == true
+    
+    n.text = "Modified but outdated"
+    n.delete.should == false
+  end
+  
   
 end
