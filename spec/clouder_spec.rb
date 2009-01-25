@@ -7,5 +7,11 @@ describe "Clouder" do
     collections.size.should == 1
     collections.first.should == "notes"
   end
+  
+  it "should allow to query any uri and just return the headers" do
+    headers = Clouder.head("http://localhost:9292/notes")
+    headers["content-type"].should include("application/json")
+  end
+  
     
 end

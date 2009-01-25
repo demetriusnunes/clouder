@@ -5,6 +5,7 @@ module Clouder
   class Entity < OpenStruct
   
     class << self
+      
       def uri(address = nil)
         address ? @uri = address : @uri
       end
@@ -101,7 +102,7 @@ module Clouder
         if options[:etag]
           url = File.join(url, options[:etag])
           self.class.new(url)
-        elsif
+        else
           url = options[:resolved] ? File.join(url, "_resolved") : url
           result = Rest.get(Rest.paramify_url(url, options))
           if options[:resolved]
@@ -158,7 +159,7 @@ module Clouder
     
     def initialize_from_json(doc)
       @id = self.class.id_from_uri(doc[:id])
-      @etag = doc[:etag].gsub('"', '')
+      @etag = doc[:etag].to_s.gsub('"', '')
       @last_modified = Time.parse(doc[:last_modified])
       @table = doc[:document].is_a?(String) ? JSON.parse(doc[:document]) : doc[:document]
       @table.keys.each { |k| v = @table.delete(k); @table[k.to_sym] = v }

@@ -255,5 +255,4 @@ describe "Entity" do
     n.delete.should == false
   end
   
-  
 end
