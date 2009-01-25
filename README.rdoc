@@ -29,7 +29,7 @@ CloudKit API Checklist:
 * POST /%collection% - OK! 
 * PUT /%collection%/%uuid% - OK! 
 * DELETE /%collection%/%uuid% - OK! 
-* HEAD /%uri% 
+* HEAD /%uri% - OK!
 
 == INSTALL:
 
