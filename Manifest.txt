@@ -4,6 +4,7 @@ PostInstall.txt
 README.rdoc
 Rakefile
 lib/clouder.rb
+lib/clouder/entity.rb
 script/console
 script/destroy
 script/generate

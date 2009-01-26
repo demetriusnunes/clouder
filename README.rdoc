@@ -8,12 +8,86 @@ A Ruby client library for accessing CloudKit using Ruby objects.
 
 == FEATURES/PROBLEMS:
 
-  FIX
+At this time, *clouder* implements all methods in CloudKit API (as seen
+in the checklist at the requirements section) and is good to be used in 
+most basic cases.
+
+Clouder::Entity is a subclass of OStruct, but that might change in
+the future.
   
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+Here is some sample code of how to use *clouder*, assuming that you
+have a CloudKit server running at <tt>http://localhost:9292/</tt> and 
+exposing "*notes*".
 
+=== Entity declaration
+
+  class Note < Clouder::Entity
+    uri "http://localhost:9292/notes"
+  end
+
+=== Creating new documents
+
+  n = Note.new
+  n.new? # true
+  n.text = "My first note"
+  n.author = "John Doe"
+  n.save
+  n.new? # false
+  
+  # Short alternative
+  n = Note.create(:text => "My first note", :author => "John Doe")
+
+=== Retrieving a single document
+
+  n = Note.new("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
+  puts n.text, n.author
+
+=== Deleting documents
+
+  n = Note.new("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
+  n.delete
+  n.deleted? # true
+  
+=== Retrieving collections
+
+  # This retrieves only the URIs
+  uris = Note.all
+  uris.each { |uri|
+    n = Note.new(uri)
+    puts n.text, n.author
+  }
+
+  # Using offset and limit
+  uris = Note.all(:offset => 5, :limit => 10)
+
+  # To retrieve full documents, use the :resolved option
+  notes = Note.all(:resolved => true)
+  
+  # You can combine all the options
+  notes = Note.all(:resolved => true, :offset => 3, :limit => 50)
+
+=== Retrieving older versions of a document
+
+  n = Note.new("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
+
+  # This retrieves only the URIs
+  # - you can also use offset and limit options
+  older_uris = n.versions(:limit => 5)
+
+  # To retrieve full documents, use the :resolved option
+  older_notes = n.versions(:resolved)
+
+=== Inspecting some metadata for a repository
+
+  # Which collections are available for this server?
+  uris = Clouder.collections("http://localhost:9292/")
+  uris # [ "notes" ]
+  
+  # Retrieving only the headers for a valid URI
+  headers = Clouder.head("http://localhost:9292/notes")
+  
 == REQUIREMENTS:
 
 CloudKit API Checklist:
@@ -33,13 +107,13 @@ CloudKit API Checklist:
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install clouder
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2009 FIXME full name
+Copyright (c) 2009 Demetrius Nunes
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
