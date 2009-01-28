@@ -9,6 +9,24 @@ describe "Entity" do
     Note.all(:resolved => true).each { |n| n.delete }
   end
 
+  it "should let each class be associated with a different uri" do
+    class Comment < Clouder::Entity
+      uri "http://localhost:9292/comments"
+    end
+    
+    Comment.uri.should == "http://localhost:9292/comments"
+    Note.uri.should == "http://localhost:9292/notes"
+  end
+
+  it "should let each subclass be associated with a different uri" do
+    class Reminder < Note
+      uri "http://localhost:9292/reminders"
+    end
+    
+    Reminder.uri.should == "http://localhost:9292/reminders"
+    Note.uri.should == "http://localhost:9292/notes"
+  end
+  
   it "should let you know the available methods for the class" do
     options = Note.options
     options.should == %w(GET HEAD POST OPTIONS)

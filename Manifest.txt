@@ -5,6 +5,7 @@ README.rdoc
 Rakefile
 lib/clouder.rb
 lib/clouder/entity.rb
+lib/clouder/rest.rb
 script/console
 script/destroy
 script/generate
