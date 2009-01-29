@@ -4,7 +4,8 @@
 
 == DESCRIPTION:
 
-A Ruby client library for accessing CloudKit (http://getcloudkit.com) using Ruby objects.
+A Ruby client library for accessing CloudKit (http://getcloudkit.com) 
+RESTful repositories using simple Ruby objects.
 
 == FEATURES/PROBLEMS:
 
