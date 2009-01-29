@@ -6,8 +6,8 @@ Rakefile
 lib/clouder.rb
 lib/clouder/entity.rb
 lib/clouder/rest.rb
-script/console
-script/destroy
-script/generate
-test/test_clouder.rb
-test/test_helper.rb
+spec/clouder_spec.rb
+spec/entity_spec.rb
+spec/spec_helper.rb
+spec/spec.opts
+spec/config.ru
