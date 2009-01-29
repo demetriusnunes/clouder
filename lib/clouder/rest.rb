@@ -3,10 +3,6 @@ require 'cgi'
 class Rest
   class << self
 
-    def last_response
-      RestClient.last_response
-    end
-      
     # set proxy for RestClient to use
     def proxy url
       RestClient.proxy = url
@@ -14,35 +10,52 @@ class Rest
  
     def put uri, doc = nil, headers = {}
       payload = doc.to_json if doc
-      JSON.parse(RestClient.put(uri, payload, headers))
+      parse(RestClient.put(uri, payload, headers))
     end
  
     def get uri
-      JSON.parse(RestClient.get(uri), :max_nesting => false)
+      parse(RestClient.get(uri), :max_nesting => false)
     end
   
     def post uri, doc = nil, headers = {}
       payload = doc.to_json if doc
-      JSON.parse(RestClient.post(uri, payload, headers))
+      parse(RestClient.post(uri, payload, headers))
     end
   
     def delete uri, headers = {}
-      JSON.parse(RestClient.delete(uri, headers))
+      parse(RestClient.delete(uri, headers))
     end
     
     def copy uri, destination
-      JSON.parse(RestClient.copy(uri, {'Destination' => destination}))
+      parse(RestClient.copy(uri, {'Destination' => destination}))
     end
     
     def move uri, destination
-      JSON.parse(RestClient.move(uri, {'Destination' => destination}))
+      parse(RestClient.move(uri, {'Destination' => destination}))
     end
 
+    def head uri, headers = {}
+      custom(:head, uri, headers)
+    end
+    
     def custom method, uri, headers = {}
-      response = RestClient.custom(method, uri, headers)
-      JSON.parse(response) if response
+      response = nil
+      url = URI.parse(uri)
+      Net::HTTP.start(url.host, url.port) { |http|
+        response = http.send(method, url.path, headers)
+      }
+      response.to_hash
     end
   
+    def parse(response, opts = {})
+      if response
+        json = JSON.parse(response, opts)
+        json.extend(ResponseHeaders)
+        json.headers = response.headers
+        json
+      end
+    end
+    
     def paramify_url url, params = {}
       if params && !params.empty?
         query = params.collect do |k,v|
@@ -54,4 +67,14 @@ class Rest
       url
     end
   end # class << self
+end
+
+module ResponseHeaders
+  def headers
+    @headers
+  end
+  
+  def headers=(h)
+    @headers = h
+  end
 end

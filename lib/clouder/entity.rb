@@ -59,8 +59,8 @@ module Clouder
       #
       #  Note.options # => [ "GET", "HEAD", "POST", "OPTIONS" ]
       def options(uri = self.uri)
-        Rest.custom(:options, uri)
-        Rest.last_response["Allow"].to_s.split(",").map { |s| s.strip }
+        doc = Rest.custom(:options, uri)
+        doc["allow"].to_s.split(",").map { |s| s.strip }
       end
 
       # Extracts object ids from absolute or partial URIs.
@@ -245,8 +245,8 @@ module Clouder
       document = Rest.get(uri)
       initialize_from_json(
         :id => uri,
-        :etag => Rest.last_response['etag'],
-        :last_modified => Rest.last_response['last-modified'],
+        :etag => document.headers[:etag],
+        :last_modified => document.headers[:last_modified],
         :document => document
       )
     end

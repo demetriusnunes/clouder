@@ -3,7 +3,7 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 require "rubygems"
 require 'json'
-require 'rest-client/lib/rest_client'
+require 'restclient'
 require 'clouder/entity'  
 require 'clouder/rest'  
 
@@ -24,8 +24,7 @@ module Clouder
   # Makes a HEAD request to the +uri+ and returns a hash
   # of headers contained in the response.
   def Clouder.head(uri)
-    Rest.custom(:head, uri)
-    Rest.last_response.to_hash
+    Rest.head(uri)
   end
   
 end
