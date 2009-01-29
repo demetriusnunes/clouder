@@ -43,6 +43,13 @@ describe "Entity" do
     n = Note.new
     n.new?.should == true
   end
+
+  it "should let you create entity classes with attributes" do
+    n = Note.new(:text => "My first note", :author => "Myself")
+    n.new?.should == true
+    n.text.should == "My first note"
+    n.author.should == "Myself"
+  end
   
   it "should let you inspect its uri" do
     Note.uri.should == "http://localhost:9292/notes"
@@ -123,7 +130,7 @@ describe "Entity" do
 
     id, etag, last_modified = n.id, n.etag, n.last_modified
         
-    n = Note.new(id)
+    n = Note.get(id)
     n.text.should == "My Note"
     n.author.should == "John Doe"
     n.id.should == id
@@ -131,19 +138,23 @@ describe "Entity" do
     n.last_modified.should == last_modified
   end
 
+  it "should return nil when trying to retrieve a non-existing object" do
+    Note.get("abcdef").should == nil
+  end
+  
   it "should let you update saved objects" do
     n = Note.new
     n.text = "My Note"
     n.author = "John Doe"
     n.save
 
-    n = Note.new(n.id)
+    n = Note.get(n.id)
     n.versions.size.should == 1
     n.text = "My modified note"
     n.author = "John Doe II"
     n.save.should == true
 
-    n = Note.new(n.id)
+    n = Note.get(n.id)
     n.versions.size.should == 2
     n.text.should == "My modified note"
     n.author.should == "John Doe II"
@@ -254,7 +265,7 @@ describe "Entity" do
   it "should fail when trying to save an outdated object" do
     n = Note.create(:text => "Original")
     
-    n2 = Note.new(n.id)
+    n2 = Note.get(n.id)
     n2.text = "Modified"
     n2.save.should == true
     
@@ -265,7 +276,7 @@ describe "Entity" do
   it "should fail when trying to delete an outdated object" do
     n = Note.create(:text => "Original")
     
-    n2 = Note.new(n.id)
+    n2 = Note.get(n.id)
     n2.text = "Modified"
     n2.save.should == true
     

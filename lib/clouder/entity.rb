@@ -54,6 +54,20 @@ module Clouder
         obj
       end
 
+      # Retrieves an existing object with the given id or uri.
+      # Returns nil if the object is not found.
+      #
+      #   note = Note.get("ce655c90-cf09-012b-cd41-0016cb91f13d")
+      def get(id_or_uri)
+        uri = uri_from_id(id_or_uri)
+        document = Rest.get(uri)
+        new({'uri' => uri, 'etag' => document.headers[:etag], 
+            'last_modified' => document.headers[:last_modified],
+            'document' => document })
+      rescue RestClient::ResourceNotFound
+        nil
+      end
+      
       # Returns an array of allowed HTTP methods to be requested at
       # +uri+. If +uri+ is nil, the class URI is queried.
       #
@@ -122,25 +136,14 @@ module Clouder
       URI.parse(uri).path
     end
 
-    # Constructs a new, unsaved object OR retrieves an existing object. 
-    # According to +id_or_attributes+, which can be:
-    #
-    # [nil] Initializes a new, unsaved, empty object
-    # [Hash of attributes and values] Initializes a new, unsaved object with attributes and values set
-    # [String with a URI, path or ID] Retrieves the corresponding object if exists
+    # Constructs a new, unsaved object. If +attributes+ are passed in a hash
+    # the new object is initialized with the corresponding attributes and values.
     #
     #  note = Note.new # => new, empty
     #  note = Note.new(:text => "Ready note", :author => "Myself") # => new, with attributes set
-    #  note = Note.new("ce655c90-cf09-012b-cd41-0016cb91f13d") # => existing object
-    def initialize(id_or_attributes = nil)
+    def initialize(attributes = {})
       @id, @etag, @last_modified, @deleted = nil
-
-      case id_or_attributes
-      when Hash: build(id_or_attributes)
-      when String: get(id_or_attributes)
-      else
-        @table = Hash.new
-      end
+      build(attributes)
     end
 
     # Saves a new or existing object. If the object already exists,
@@ -194,7 +197,7 @@ module Clouder
         url = File.join(uri, "versions")
         if options[:etag]
           url = File.join(url, options[:etag])
-          self.class.new(url)
+          self.class.get(url)
         else
           url = options[:resolved] ? File.join(url, "_resolved") : url
           result = Rest.get(Rest.paramify_url(url, options))
@@ -229,35 +232,24 @@ module Clouder
     end
     
     def build(doc)
-      @table = doc
-      if @table["uri"]
-        initialize_from_json(
-          :id => @table['uri'],
-          :etag => @table['etag'],
-          :last_modified => @table['last_modified'],
-          :document => @table['document']
-        )
+      if doc['uri']
+        set_internal_attributes(doc['uri'], doc['etag'],
+                                doc['last_modified'], doc['document'])
+      else
+        @table = doc
       end
+      symbolize_table_keys!
     end
     
-    def get(id_or_uri)
-      uri = self.class.uri_from_id(id_or_uri)
-      document = Rest.get(uri)
-      initialize_from_json(
-        :id => uri,
-        :etag => document.headers[:etag],
-        :last_modified => document.headers[:last_modified],
-        :document => document
-      )
+    def set_internal_attributes(id, etag, last_modified, table)
+      @id = self.class.id_from_uri(id)
+      @etag = etag.to_s.gsub('"', '')
+      @last_modified = Time.parse(last_modified)
+      @table = table.is_a?(String) ? JSON.parse(table) : table
     end
-    
-    def initialize_from_json(doc)
-      @id = self.class.id_from_uri(doc[:id])
-      @etag = doc[:etag].to_s.gsub('"', '')
-      @last_modified = Time.parse(doc[:last_modified])
-      @table = doc[:document].is_a?(String) ? JSON.parse(doc[:document]) : doc[:document]
+
+    def symbolize_table_keys!
       @table.keys.each { |k| v = @table.delete(k); @table[k.to_sym] = v }
-    end
-    
+    end        
   end
 end
