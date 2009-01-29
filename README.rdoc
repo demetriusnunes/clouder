@@ -41,12 +41,12 @@ exposing "*notes*".
 
 === Retrieving a single document
 
-  n = Note.new("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
+  n = Note.get("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
   puts n.text, n.author
 
 === Deleting documents
 
-  n = Note.new("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
+  n = Note.get("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
   n.delete
   n.deleted? # true
   
@@ -55,7 +55,7 @@ exposing "*notes*".
   # This retrieves only the URIs
   uris = Note.all
   uris.each { |uri|
-    n = Note.new(uri)
+    n = Note.get(uri)
     puts n.text, n.author
   }
 
@@ -70,7 +70,7 @@ exposing "*notes*".
 
 === Retrieving older versions of a document
 
-  n = Note.new("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
+  n = Note.get("d35bfa70-cca0-012b-cd41-0016cb91f13d") # some valid id
 
   # This retrieves only the URIs
   # - you can also use offset and limit options

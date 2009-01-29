@@ -9,7 +9,7 @@ require 'clouder/rest'
 
 # The Clouder module holds global server-wide functions.
 module Clouder
-  VERSION = '0.0.1'
+  VERSION = '0.5.0'
 
   # Returns an array of URIs of the resources exposed by
   # the CloudKit server at the +uri+.
