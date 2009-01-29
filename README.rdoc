@@ -1,10 +1,10 @@
 = clouder
 
-* http://github.com/demetriusnunes/clouder/tree/master
+* http://github.com/demetriusnunes/clouder
 
 == DESCRIPTION:
 
-A Ruby client library for accessing CloudKit using Ruby objects.
+A Ruby client library for accessing CloudKit (http://getcloudkit.com) using Ruby objects.
 
 == FEATURES/PROBLEMS:
 
@@ -90,7 +90,7 @@ exposing "*notes*".
   
 == REQUIREMENTS:
 
-CloudKit API Checklist:
+CloudKit API (http://getcloudkit.com/rest-api.html) Checklist:
 
 * GET /cloudkit-meta - OK!
 * OPTIONS /%uri% - OK!
