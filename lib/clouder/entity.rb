@@ -105,7 +105,7 @@ module Clouder
         else
           # /notes/1234
           if url.path[0,1] == "/"
-            URI.parse(self.uri) + uri
+            (URI.parse(self.uri) + url).to_s
           # 1234
           else
             File.join("#{self.uri}", id)

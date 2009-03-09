@@ -138,6 +138,22 @@ describe "Entity" do
     n.last_modified.should == last_modified
   end
 
+  it "should let you retrieve saved objects by URI" do
+    n = Note.new
+    n.text = "My Note"
+    n.author = "John Doe"
+    n.save
+
+    id, etag, last_modified = n.id, n.etag, n.last_modified
+        
+    n = Note.get Note.all.first
+    n.text.should == "My Note"
+    n.author.should == "John Doe"
+    n.id.should == id
+    n.etag.should == etag
+    n.last_modified.should == last_modified
+  end
+
   it "should return nil when trying to retrieve a non-existing object" do
     Note.get("abcdef").should == nil
   end
