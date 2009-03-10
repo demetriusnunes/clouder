@@ -6,19 +6,18 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Demetrius Nunes"]
-  s.date = %q{2009-01-29}
-  s.description = %q{A Ruby client library for accessing CloudKit using Ruby objects.}
+  s.date = %q{2009-03-09}
+  s.description = %q{A Ruby client library for accessing CloudKit (http://getcloudkit.com)  RESTful repositories using simple Ruby objects.}
   s.email = ["demetriusnunes@gmail.com"]
   s.extra_rdoc_files = ["History.txt", "Manifest.txt", "PostInstall.txt", "README.rdoc"]
   s.files = ["History.txt", "Manifest.txt", "PostInstall.txt", "README.rdoc", "Rakefile", "lib/clouder.rb", "lib/clouder/entity.rb", "lib/clouder/rest.rb", "spec/clouder_spec.rb", "spec/entity_spec.rb", "spec/spec_helper.rb", "spec/spec.opts", "spec/config.ru"]
   s.has_rdoc = true
-  s.homepage = %q{http://github.com/demetriusnunes/clouder/tree/master}
-  s.post_install_message = %q{PostInstall.txt}
+  s.homepage = %q{http://github.com/demetriusnunes/clouder}
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{clouder}
   s.rubygems_version = %q{1.3.1}
-  s.summary = %q{A Ruby client library for accessing CloudKit using Ruby objects.}
+  s.summary = %q{A Ruby client library for accessing CloudKit (http://getcloudkit.com)  RESTful repositories using simple Ruby objects.}
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
