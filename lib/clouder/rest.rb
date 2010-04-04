@@ -49,7 +49,7 @@ class Rest
   
     def parse(response, opts = {})
       if response
-        json = JSON.parse(response, opts)
+        json = JSON.parse(response.body, opts)
         json.extend(ResponseHeaders)
         json.headers = response.headers
         json

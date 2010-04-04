@@ -91,7 +91,10 @@ exposing "*notes*".
   
 == REQUIREMENTS:
 
-CloudKit API (http://getcloudkit.com/rest-api.html) Checklist:
+* cloudkit
+* rest-client
+
+== CloudKit API (http://getcloudkit.com/rest-api.html) Checklist:
 
 * GET /cloudkit-meta - OK!
 * OPTIONS /%uri% - OK!
@@ -110,6 +113,20 @@ CloudKit API (http://getcloudkit.com/rest-api.html) Checklist:
 
 * sudo gem install clouder
 
+== TESTING:
+
+Start the test server with (you need rack for this):
+
+ rake test
+ 
+Then run the specs with:
+
+ rake spec
+
+To have coverage report, run:
+
+ rake rcov
+ 
 == LICENSE:
 
 (The MIT License)

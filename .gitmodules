@@ -1,3 +1,0 @@
-[submodule "lib/rest-client"]
-	path = lib/rest-client
-	url = git@github.com:demetriusnunes/rest-client.git

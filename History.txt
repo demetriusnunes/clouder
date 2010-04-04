@@ -1,3 +1,7 @@
+== 0.5.2 2010-04-04
+
+* A one-line fix to address the new rest-client response object API. (Thanks to Larry Staton Jr.)
+
 == 0.5.1 2009-03-09
 
 * (timshadel) Added a simple fix to make Note.get(”/notes/“) work.

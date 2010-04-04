@@ -9,6 +9,18 @@ describe "Entity" do
     Note.all(:resolved => true).each { |n| n.delete }
   end
 
+  it "should retrieve all instances with ids" do
+    size = Note.all.size
+    notes = [] 
+    notes << Note.create(:text => "note 1")
+    notes << Note.create(:text => "note 2")
+     
+    notes = Note.all(:resolved => true)
+    notes.each_with_index { |n, i| 
+      n.id.should == notes[i].id
+    }
+  end
+  
   it "should let each class be associated with a different uri" do
     class Comment < Clouder::Entity
       uri "http://localhost:9292/comments"
