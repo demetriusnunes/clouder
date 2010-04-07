@@ -2,7 +2,6 @@ History.txt
 Manifest.txt
 README.txt
 Rakefile
-VERSION
 lib/clouder.rb
 lib/clouder/entity.rb
 lib/clouder/rest.rb

@@ -91,8 +91,9 @@ exposing "*notes*".
   
 == REQUIREMENTS:
 
-* cloudkit
+* cloudkit server
 * rest-client
+* json
 
 == CloudKit API (http://getcloudkit.com/rest-api.html) Checklist:
 

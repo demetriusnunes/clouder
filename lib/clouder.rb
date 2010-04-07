@@ -1,7 +1,7 @@
 $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
-require "rubygems"
+require 'rubygems'
 require 'json'
 require 'restclient'
 require 'clouder/entity'  
@@ -9,7 +9,7 @@ require 'clouder/rest'
 
 # The Clouder module holds global server-wide functions.
 module Clouder
-  VERSION = '0.5.2'
+  VERSION = '0.5.3'
 
   # Returns an array of URIs of the resources exposed by
   # the CloudKit server at the +uri+.

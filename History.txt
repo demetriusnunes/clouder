@@ -1,3 +1,7 @@
+== 0.5.3 2010-04-06
+
+* Fixing gem dependencies
+
 == 0.5.2 2010-04-04
 
 * A one-line fix to address the new rest-client response object API. (Thanks to Larry Staton Jr.)
